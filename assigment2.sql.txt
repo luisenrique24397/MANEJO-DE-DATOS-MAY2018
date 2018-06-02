@@ -2,27 +2,30 @@
 CREATE DATABASE store;
 USE store;
 CREATE TABLE customers( 
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-first_name varchar(20)NOT NULL,
-last_name varchar(20)NOT NULL,
-rfc varchar(18)UNIQUE);
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  first_name varchar(20)NOT NULL,
+  last_name varchar(20)NOT NULL, 
+  rfc varchar(18)UNIQUE
+  );
 
-CREATE TABLE prducts(
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-cost DECIMAL (14,2)NOT NULL,
-bardcord INT);
+CREATE TABLE products(
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  cost DECIMAL (14,2)NOT NULL,
+  barcode INT
+  );
 
 CREATE TABLE transactions (
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-transaction_date DATE,
-total DECIMAL (14,2),
-customer_id INT,
-FOREIGN KEY (customer_id) REFERENCES customers(id));
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  transaction_date DATE,
+  total DECIMAL (14,2),
+  customer_id INT,
+  FOREIGN KEY (customer_id) REFERENCES customers(id)
+  );
 
 CREATE TABLE transactions_products(
-id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-transactions_id INT,
-products_id INT,
-FOREIGN KEY (transactions_id) REFERENCES transactions(id),
-FOREIGN KEY (products_id) REFERENCES prducts(id)
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  transactions_id INT,
+  products_id INT,
+  FOREIGN KEY (transactions_id) REFERENCES transactions(id),
+  FOREIGN KEY (products_id) REFERENCES prducts(id)
 );
