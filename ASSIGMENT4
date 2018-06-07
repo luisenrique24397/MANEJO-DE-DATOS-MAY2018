@@ -1,0 +1,122 @@
+#1Write a query to find the name (FIRST_NAME, LAST_NAME) and salary of the employees
+#who earn a salary that is higher than the salary of all the Shipping Clerk (JOB_ID = 'SH_CLERK'). 
+#Sort the results of the salary of the lowest to highest. Employees
+
+SELECT FIRST_NAME,LAST_NAME, JOB_ID, SALARY FROM Employees
+  WHERE SALARY > (
+    SELECT MAX(SALARY) FROM Employees WHERE JOB_ID = 'SH_CLERK'
+  ) 
+  ORDER BY SALARY;
+
+
+#2Write a query to find the name (FIRST_NAME, LAST_NAME) of the employees who are not supervisors. Employees  
+
+SELECT Employees.FIRST_NAME,Employees.LAST_NAME FROM Employees
+   WHERE NOT EXISTS (
+     SELECT * FROM Employees a WHERE a.manager_id = Employees.employee_id
+   );
+
+
+#3Write a query to display the employee ID, first name, last name, and department names of all employees. 
+#Employees, Departments
+   
+   SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, 
+   (SELECT DEPARTMENT_NAME FROM Departments ones WHERE two.department_id = ones.department_id) Departments 
+   FROM Employees two ORDER BY Departments;
+   
+   
+#4Write a query to fetch even numbered records from employees table. Employees
+SELECT EMPLOYEE_ID FROM Employees 
+  WHERE MOD(EMPLOYEE_ID, 2) = 0;
+
+#5 Write a query to find the 5th maximum salary in the employees table. Employees
+SELECT DISTINCT SALARY FROM Employees a 
+  WHERE 5 = (
+    SELECT COUNT(DISTINCT SALARY) FROM Employees x WHERE x.salary >= a.salary
+  );
+#6 Write a query to find the 4th minimum salary in the employees table. Employees
+SELECT DISTINCT SALARY FROM Employees a 
+  WHERE 4 = (SELECT COUNT(DISTINCT SALARY) FROM Employees x WHERE x.salary <= a.salary
+  );
+
+#7 Write a query to select last 10 records from a table. Employees
+SELECT * FROM (
+  SELECT * FROM Employees O
+    RDER BY EMPLOYEE_ID DESC LIMIT 10
+) 
+  sub ORDER BY EMPLOYEE_ID ASC
+#8 Write a query to list the department ID and name of all the departments where no employee is working. Employees, Departments
+SELECT * FROM Departments 
+  WHERE DEPARTMENT_ID NOT IN (
+    select DEPARTMENT_ID FROM Employees
+  );
+
+#9 Write a query to get 3 maximum salaries. Employees
+
+SELECT DISTINCT SALARY FROM Employees a 
+  WHERE 3 >= (
+    SELECT COUNT(DISTINCT SALARY) FROM Employees b 
+      WHERE b.salary >= a.salary) 
+ ORDER BY a.salary DESC;
+
+
+#10 Write a query to get 3 minimum salaries. Employees
+
+SELECT DISTINCT SALARY FROM Employees a 
+WHERE 3 >= (
+  SELECT COUNT(DISTINCT SALARY) FROM Employees b 
+    WHERE b.SALARY <= a.SALARY
+) 
+ORDER BY a.SALARY DESC;
+
+
+#------------------------------------------------------JOIN'S-------------------------------------------------------------------#
+
+#1 Write a query to get the department name and number of employees in the department.
+
+SELECT DEPARTMENT_NAME AS 'Department Name', COUNT(*) AS 'No of Employees' FROM Departments 
+  INNER JOIN Employees ON Employees.department_id = Departments.department_id 
+    GROUP BY Departments.department_id, DEPARTMENT_NAME 
+      ORDER BY DEPARTMENT_NAME;
+
+
+#2 Write a query to find the employee ID, job title, number of days between ending date and starting date for all jobs in department 90 from job history.
+
+SELECT EMPLOYEE_ID, JOB_TITLE, end_date-start_date FROM JobHistory 
+  INNER JOIN Jobs 
+    WHERE DEPARTMENT_ID=90;
+    
+#3 Write a query to display the department ID and name and first name of manager.
+SELECT a.DEPARTMENT_ID, a.DEPARTMENT_NAME, a.MANAGER_ID, b.FIRST_NAME FROM Departments a 
+  INNER JOIN Employees b 
+    ON (a.MANAGER_ID = b.EMPLOYEE_ID);
+
+
+#4 Write a query to display the department name, manager name, and city.
+SELECT a.DEPARTMENT_NAME, b.FIRST_NAME, l.CITY FROM Departments a 
+  JOIN Employees b ON (a.MANAGER_ID = b.EMPLOYEE_ID) 
+    JOIN Locations l USING (LOCATION_ID);
+
+#5 Write a query to display the job title and average salary of employees.
+
+SELECT JOB_TITLE, AVG(SALARY) FROM Employees 
+  INNER JOIN Jobs GROUP BY JOB_TITLE;
+
+#6 Write a query to display job title, employee name, and the difference between salary of the employee and minimum salary for the job.
+
+SELECT JOB_TITLE, FIRST_NAME, salary-min_salary FROM Employees 
+  INNER JOIN Jobs;
+
+#7 Write a query to display the job history that were done by any employee who is currently drawing more than 10000 of salary.
+
+SELECT a.* FROM JobHistory a 
+  JOIN Employees b ON (a.EMPLOYEE_ID = b.EMPLOYEE_ID) 
+    WHERE SALARY > 10000;
+
+#8 Write a query to display department name, name (first_name, last_name), hire date, salary of the manager for all managers whose experience is more than 15 years.
+
+SELECT FIRST_NAME, LAST_NAME, HIRE_DATE, SALARY, (DATEDIFF(now(), HIRE_DATE))/365 Experience FROM Departments a 
+  JOIN Employees b ON (a.MANAGER_ID = b.EMPLOYEE_ID)
+    WHERE (DATEDIFF(now(), HIRE_DATE))/365>15;
+
+
